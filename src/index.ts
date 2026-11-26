@@ -1,7 +1,7 @@
 // 入口。/mcp/key はエージェントのキーで、/admin は Cloudflare Access で守る。
 
 import { accessConfigured, verifyAccess } from "./access";
-import { action, overview, threadPage } from "./admin";
+import { action, overview, parseFilter, threadPage } from "./admin";
 import { authenticate } from "./auth";
 import type { Env } from "./config";
 import { handleMcp } from "./mcp";
@@ -36,9 +36,9 @@ export default {
       const board = env.BOARD.get(env.BOARD.idFromName("board"));
       if (req.method === "POST") return action(req, env, path);
       if (req.method !== "GET") return text("Method not allowed", 405);
-      if (path === "/admin") return overview(board);
+      if (path === "/admin") return overview(board, { filter: parseFilter(url.searchParams.get("filter")) });
       const m = /^\/admin\/thread\/(t_[0-9a-f]{16})$/.exec(path);
-      if (m) return threadPage(board, m[1]!);
+      if (m) return threadPage(board, m[1]!, { filter: parseFilter(url.searchParams.get("filter")) });
       return text("Not found", 404);
     }
 

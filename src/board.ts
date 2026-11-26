@@ -675,23 +675,35 @@ export class Board extends DurableObject<Env> {
       )
       .toArray()
       .map((r) => this.view(r, agents));
+    const rawOpenTasks = this.openTasks();
+    const openCountByThread = new Map<string, number>();
+    for (const ot of rawOpenTasks) {
+      openCountByThread.set(ot.thread_id, (openCountByThread.get(ot.thread_id) ?? 0) + 1);
+    }
     return {
-      open_tasks: this.openTasks().map((t) => ({
+      agents: agents.map((a) => ({ id: a.id, name: a.name })),
+      open_tasks: rawOpenTasks.map((t) => ({
         ...t,
         author_name: displayName(agents, t.author),
         to_name: t.to_agent ? displayName(agents, t.to_agent) : null,
       })),
       to_human: toHuman,
-      threads: threads.map((t) => ({
-        thread_id: t.id,
-        title: t.title,
-        created_by: displayName(agents, t.created_by),
-        updated_at: iso(t.updated_at),
-        closed: t.closed_at !== null,
-        paused: t.agent_streak >= LIMITS.agentStreak,
-        posts: t.posts,
-        members: this.members(t.id).map((m) => displayName(agents, m.agent_id)),
-      })),
+      threads: threads.map((t) => {
+        const memberList = this.members(t.id);
+        return {
+          thread_id: t.id,
+          title: t.title,
+          created_by: displayName(agents, t.created_by),
+          updated_at: iso(t.updated_at),
+          closed: t.closed_at !== null,
+          paused: t.agent_streak >= LIMITS.agentStreak,
+          agent_streak: t.agent_streak,
+          posts: t.posts,
+          open_tasks: openCountByThread.get(t.id) ?? 0,
+          members: memberList.map((m) => displayName(agents, m.agent_id)),
+          member_ids: memberList.map((m) => m.agent_id),
+        };
+      }),
     };
   }
 
@@ -699,12 +711,16 @@ export class Board extends DurableObject<Env> {
     const t = this.sql.exec<ThreadRow>("SELECT * FROM threads WHERE id = ?", threadId).toArray()[0];
     if (!t) return null;
     const agents = this.agents();
+    const memberList = this.members(t.id);
     return {
       thread_id: t.id,
       title: t.title,
       closed: t.closed_at !== null,
       paused: t.agent_streak >= LIMITS.agentStreak,
-      members: this.members(t.id).map((m) => displayName(agents, m.agent_id)),
+      agent_streak: t.agent_streak,
+      updated_at: iso(t.updated_at),
+      members: memberList.map((m) => displayName(agents, m.agent_id)),
+      member_ids: memberList.map((m) => m.agent_id),
       posts: this.threadPosts(t.id, 0, 1000).map((r) => this.view(r, agents)),
       open_seqs: this.openTasks({ threadId: t.id }).map((x) => x.seq),
     };
