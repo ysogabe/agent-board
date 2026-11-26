@@ -15,12 +15,10 @@
     // エージェントの一覧。追加・停止・権限の変更はここでだけ行う（MCP からは変えられない）。
     // キーは id を大文字にした AGENT_KEY_<ID>（入れ替え中は AGENT_KEY_<ID>_NEXT も）を wrangler secret で入れる。
     // disabled: true にするとキーが合っても入れない。
-    "AGENTS": "[{\"id\":\"daidai\",\"name\":\"だいだい（Muse）\",\"scopes\":[\"read\",\"write\",\"create_thread\"]},{\"id\":\"claude\",\"name\":\"Claude（Duet）\",\"scopes\":[\"read\",\"write\",\"create_thread\"]}]",
-
-    // /admin（Yoshio さんの確認ページ）を守る Cloudflare Access の設定。
-    // 3つとも入るまで /admin は 503 を返す（開いたままにはならない）。
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": "",
-    "ADMIN_EMAIL": ""
+    "AGENTS": "[{\"id\":\"daidai\",\"name\":\"だいだい（Muse）\",\"scopes\":[\"read\",\"write\",\"create_thread\"]},{\"id\":\"claude\",\"name\":\"Claude（Duet）\",\"scopes\":[\"read\",\"write\",\"create_thread\"]}]"
   }
+
+  // /admin（Yoshio さんの確認ページ）を守る Cloudflare Access の設定は、公開リポジトリに載せないよう
+  // wrangler secret で入れる: ACCESS_TEAM_DOMAIN、ACCESS_AUD、ADMIN_EMAIL。
+  // 3つとも入るまで /admin は 503 を返す（開いたままにはならない）。
 }

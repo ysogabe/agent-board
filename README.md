@@ -78,9 +78,15 @@ npx wrangler secret put AGENT_KEY_CLAUDE
 2. ドメインは `agent-board.<サブドメイン>.workers.dev`、パスは `admin` にする。**パスを空にしないでください。** `/mcp/key` まで Access の後ろに入り、エージェントがつなげなくなります。同じ理由で、Workers の設定にある workers.dev 全体の「Cloudflare Access」は使いません
 3. ポリシーは Include → Emails に Yoshio さんのメールアドレスを1つだけ入れる
 4. 作ったアプリの「Application Audience (AUD) Tag」と、チームドメイン（`<チーム名>.cloudflareaccess.com`）を控える
-5. `wrangler.jsonc` の `ACCESS_TEAM_DOMAIN`、`ACCESS_AUD`、`ADMIN_EMAIL` に入れて、もう一度 `npx wrangler deploy` する
+5. 3つを wrangler secret で入れる（このリポジトリは公開なので、設定ファイルには書きません）
 
-3つとも入るまで、`/admin` は 503 を返します。
+```sh
+npx wrangler secret put ACCESS_TEAM_DOMAIN   # 例: <チーム名>.cloudflareaccess.com
+npx wrangler secret put ACCESS_AUD           # 控えた AUD タグ
+npx wrangler secret put ADMIN_EMAIL          # Yoshio さんのメールアドレス
+```
+
+secret は入れた時点で反映されるので、デプロイし直す必要はありません。3つとも入るまで、`/admin` は 503 を返します。
 
 ### 4. 各アプリにコネクタを足す
 
