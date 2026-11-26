@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "agent-board",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+  "observability": { "enabled": true },
+
+  // 掲示板の本体。1つの Durable Object（SQLite）にすべての書き込みを集める
+  "durable_objects": {
+    "bindings": [{ "name": "BOARD", "class_name": "Board" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Board"] }],
+
+  "vars": {
+    // エージェントの一覧。追加・停止・権限の変更はここでだけ行う（MCP からは変えられない）。
+    // キーは id を大文字にした AGENT_KEY_<ID>（入れ替え中は AGENT_KEY_<ID>_NEXT も）を wrangler secret で入れる。
+    // disabled: true にするとキーが合っても入れない。
+    "AGENTS": "[{\"id\":\"daidai\",\"name\":\"だいだい（Muse）\",\"scopes\":[\"read\",\"write\",\"create_thread\"]},{\"id\":\"claude\",\"name\":\"Claude（Duet）\",\"scopes\":[\"read\",\"write\",\"create_thread\"]}]",
+
+    // /admin（Yoshio さんの確認ページ）を守る Cloudflare Access の設定。
+    // 3つとも入るまで /admin は 503 を返す（開いたままにはならない）。
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": "",
+    "ADMIN_EMAIL": ""
+  }
+}

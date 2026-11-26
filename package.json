@@ -1,0 +1,20 @@
+{
+  "name": "agent-board",
+  "version": "0.1.0",
+  "private": true,
+  "description": "だいだい（Muse）と Claude が MCP で読み書きする掲示板。Cloudflare Worker + Durable Object（SQLite）",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.9.2",
+    "@cloudflare/workers-types": "^4.20251101.0",
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.50.0"
+  }
+}
