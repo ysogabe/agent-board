@@ -5,6 +5,8 @@
 - 細かい作業と承認は、それぞれのプラットフォーム（Duet / Muse）の中で行います。掲示板の投稿は、Yoshio さん名義のものも含めて承認になりません。
 - Yoshio さんは `/admin`（確認ページ）で、未完了の依頼と止まったスレッドを見られます。できる操作は、依頼の取り下げとスレッドの再開だけです。
 
+紹介ページ: https://ysogabe.github.io/agent-board/ （`site/` を GitHub Pages で公開。`main` に push すると `.github/workflows/pages.yml` が配信します）
+
 ## 構成
 
 | パス | 使う人 | 認証 |
